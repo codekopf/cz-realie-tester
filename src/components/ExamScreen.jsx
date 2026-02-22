@@ -9,13 +9,51 @@
  * @param {Function} props.onEvaluate  - A callback function to handle test evaluation.
  * @param {boolean}  props.isEvaluated - A flag indicating whether the test has been evaluated (viewing mode).
  */
-import { useState } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import QuestionCard from './QuestionCard'
 
-function ExamScreen({ questions, userAnswers, onAnswer, onEvaluate, isEvaluated }) {
+/** Formats seconds into MM:SS string. */
+function formatTime(totalSeconds) {
+  const mins = Math.floor(totalSeconds / 60)
+  const secs = totalSeconds % 60
+  return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`
+}
+
+function ExamScreen({ questions, userAnswers, onAnswer, onEvaluate, isEvaluated, timeLimitMs, testStartTime }) {
   const [currentIndex, setCurrentIndex] = useState(0)
+  const [remainingSeconds, setRemainingSeconds] = useState(() => Math.floor(timeLimitMs / 1000))
+  const [showTimeUpModal, setShowTimeUpModal] = useState(false)
+  const timeUpTriggeredRef = useRef(false)
   const totalQuestions = questions.length
   const answeredCount = Object.keys(userAnswers).length
+
+  // Countdown timer
+  useEffect(() => {
+    if (isEvaluated || !testStartTime) return
+
+    const tick = () => {
+      const elapsed = Date.now() - testStartTime
+      const remaining = Math.max(0, Math.floor((timeLimitMs - elapsed) / 1000))
+      setRemainingSeconds(remaining)
+
+      if (remaining <= 0 && !timeUpTriggeredRef.current) {
+        timeUpTriggeredRef.current = true
+        setShowTimeUpModal(true)
+      }
+    }
+
+    tick() // run immediately
+    const intervalId = setInterval(tick, 1000)
+    return () => clearInterval(intervalId)
+  }, [isEvaluated, testStartTime, timeLimitMs])
+
+  const handleTimeUpAccept = useCallback(() => {
+    setShowTimeUpModal(false)
+    onEvaluate()
+  }, [onEvaluate])
+
+  const isWarning = !isEvaluated && remainingSeconds <= 300 && remainingSeconds > 60 // last 5 minutes
+  const isCritical = !isEvaluated && remainingSeconds <= 60 // last minute
 
   const goTo = (index) => {
     setCurrentIndex(index)
@@ -51,6 +89,32 @@ function ExamScreen({ questions, userAnswers, onAnswer, onEvaluate, isEvaluated 
 
   return (
     <div>
+      {/* Time-up modal */}
+      {showTimeUpModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <div className="modal-icon">&#9200;</div>
+            <h2 className="modal-title">Cas vyprsel!</h2>
+            <p className="modal-text">
+              Casovy limit 30 minut pro dokonceni testu vyprsel.
+              Vas test bude nyni automaticky vyhodnocen s dosud zadanymi odpovemi.
+            </p>
+            <button className="btn btn-primary btn-lg" onClick={handleTimeUpAccept}>
+              Rozumim, vyhodnotit test
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Timer */}
+      {!isEvaluated && (
+        <div className={`exam-timer ${isWarning ? 'warning' : ''} ${isCritical ? 'critical' : ''}`}>
+          <span className="timer-icon">&#9200;</span>
+          <span className="timer-value">{formatTime(remainingSeconds)}</span>
+          <span className="timer-label">zbyvajici cas</span>
+        </div>
+      )}
+
       {/* Progress */}
       <div className="progress-section">
         <div className="progress-header">

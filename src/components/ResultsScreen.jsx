@@ -3,15 +3,24 @@
  * Displays the score (correct / total), pass/fail status, and a detailed review of each question.
  *
  * @param {Object}   props
- * @param {Array}    props.questions   – Array of test questions.
- * @param {Object}   props.userAnswers – Map of user's answers.
- * @param {Object}   props.results     – Results object: { correct, total, passed, percentage }
- * @param {Function} props.onNewTest   – Callback to start a new test.
- * @param {Function} props.onReview    – Callback to return to question review.
+ * @param {Array}    props.questions     – Array of test questions.
+ * @param {Object}   props.userAnswers   – Map of user's answers.
+ * @param {Object}   props.results       – Results object: { correct, total, passed, percentage, elapsedSeconds }
+ * @param {Function} props.onNewTest     – Callback to start a new test.
+ * @param {Function} props.onReview      – Callback to return to question review.
+ * @param {Function} props.onBackToStart – Callback to go back to start screen.
  */
 const LETTERS = ['A', 'B', 'C', 'D']
 
-function ResultsScreen({ questions, userAnswers, results, onNewTest, onReview }) {
+/** Formats seconds into a human-readable "Xm Ys" string. */
+function formatElapsedTime(totalSeconds) {
+  if (totalSeconds == null) return null
+  const mins = Math.floor(totalSeconds / 60)
+  const secs = totalSeconds % 60
+  return `${mins}m ${String(secs).padStart(2, '0')}s`
+}
+
+function ResultsScreen({ questions, userAnswers, results, onNewTest, onReview, onBackToStart }) {
   const { correct, total, passed, percentage } = results
 
   return (
@@ -35,12 +44,21 @@ function ResultsScreen({ questions, userAnswers, results, onNewTest, onReview })
           : `Pro úspěch je potřeba minimálně 18 správných odpovědí (60%).`}
       </p>
 
+      {results.elapsedSeconds != null && (
+        <p className="result-time">
+          &#9200; Cas: {formatElapsedTime(results.elapsedSeconds)} z 30m 00s
+        </p>
+      )}
+
       <div className="result-actions">
         <button className="btn btn-primary btn-lg" onClick={onNewTest}>
           Nový test
         </button>
         <button className="btn btn-outline" onClick={onReview}>
           Zobrazit odpovědi
+        </button>
+        <button className="btn btn-outline" onClick={onBackToStart}>
+          Zpět na úvod
         </button>
       </div>
 
