@@ -1,3 +1,16 @@
+/**
+ * Shows a single question with its answers.
+ * Supports both text and image answers.
+ * After evaluation, visually highlights the correct and incorrect answers (green/red + ✓/✗ icons).
+ *
+ * @param {Object}   props
+ * @param {Object}   props.question       – The question object (question, answers, correctAnswer, topic, …).
+ * @param {number}   props.questionIndex  – The index of the question within the test (0–29).
+ * @param {number}   props.totalQuestions – The total number of questions.
+ * @param {number}   props.selectedAnswer – The index of the selected answer (or undefined).
+ * @param {Function} props.onAnswer       – Callback to record the answer.
+ * @param {boolean}  props.isEvaluated    – Whether the test is evaluated (review mode).
+ */
 const LETTERS = ['A', 'B', 'C', 'D']
 
 function QuestionCard({

@@ -1,3 +1,10 @@
+/**
+ * Entry screen with test information and start button.
+ * Displays rules (30 questions, minimum 18 correct, 3 thematic areas) and a button to start a new test.
+ *
+ * @param {Object} props
+ * @param {Function} props.onStart – Callback triggered when "Start Test" button is clicked.
+ */
 function StartScreen({ onStart }) {
   return (
     <div className="start-screen">

@@ -1,3 +1,14 @@
+/**
+ * Shows the test results with a breakdown of correct and incorrect answers.
+ * Displays the score (correct / total), pass/fail status, and a detailed review of each question.
+ *
+ * @param {Object}   props
+ * @param {Array}    props.questions   – Array of test questions.
+ * @param {Object}   props.userAnswers – Map of user's answers.
+ * @param {Object}   props.results     – Results object: { correct, total, passed, percentage }
+ * @param {Function} props.onNewTest   – Callback to start a new test.
+ * @param {Function} props.onReview    – Callback to return to question review.
+ */
 const LETTERS = ['A', 'B', 'C', 'D']
 
 function ResultsScreen({ questions, userAnswers, results, onNewTest, onReview }) {

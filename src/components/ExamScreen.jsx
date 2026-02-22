@@ -1,3 +1,14 @@
+/**
+ * ExamScreen component displays the current state of the test, including progress, navigation dots, the current question,
+ * and navigation buttons. It allows users to navigate between questions and submit their answers for evaluation.
+ *
+ * @param {Object}   props             - The component props.
+ * @param {Array}    props.questions   - An array of question objects for the current test.
+ * @param {Object}   props.userAnswers - A mapping of question indices to selected answer indices.
+ * @param {Function} props.onAnswer    - A callback function to handle answer selection (questionIndex, answerIndex).
+ * @param {Function} props.onEvaluate  - A callback function to handle test evaluation.
+ * @param {boolean}  props.isEvaluated - A flag indicating whether the test has been evaluated (viewing mode).
+ */
 import { useState } from 'react'
 import QuestionCard from './QuestionCard'
 

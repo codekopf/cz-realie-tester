@@ -1,3 +1,8 @@
+/**
+ * Main application component.
+ *
+ * Manages navigation between screens (start, exam progress, results), generates random tests and evaluates results.
+ */
 import { useState, useCallback } from 'react'
 import './App.css'
 import questionsData from './data/questions.json'
@@ -8,6 +13,7 @@ import ResultsScreen from './components/ResultsScreen'
 const QUESTIONS_PER_TEST = 30
 const PASS_THRESHOLD = 18
 
+/** Generates a new test - randomly selects one question from each of the 30 thematic groups. */
 function generateTest() {
   return questionsData.map((group) => {
     const randomIndex = Math.floor(Math.random() * group.questions.length)
