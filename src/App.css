@@ -5,9 +5,7 @@
   padding: 1.5rem 2rem;
   text-align: center;
   box-shadow: var(--shadow-md);
-  position: sticky;
-  top: 0;
-  z-index: 100;
+  position: static;
 }
 
 .app-header h1 {
