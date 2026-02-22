@@ -16,6 +16,12 @@ Aplikace generuje náhodné testy po 30 otázkách (jedna z každého tematické
 
 Застосунок генерує випадкові тести з 30 питань (по одному з кожного тематичного розділу) та оцінює результати. Для успішного складання необхідно щонайменше 18 правильних відповідей (60%).
 
+# 🇻🇳Chuẩn bị cho bài kiểm tra thực tế Séc
+
+Ứng dụng web để chuẩn bị cho kỳ thi về thực tế Séc, là một phần của quy trình cấp quốc tịch Cộng hòa Séc.
+
+Ứng dụng tạo các bài kiểm tra ngẫu nhiên gồm 30 câu hỏi (mỗi câu từ một lĩnh vực chủ đề) và đánh giá kết quả. Cần tối thiểu 18 câu trả lời đúng (60%) để đạt.
+
 ## Installation and deployment
 
 ### Technology and Requirements
