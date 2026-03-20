@@ -789,6 +789,221 @@
   color: var(--color-error);
 }
 
+/* Question Review Screen */
+.review-screen {
+  padding: 1rem 0;
+}
+
+.review-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.review-header h2 {
+  font-size: 1.5rem;
+  color: var(--color-primary);
+  margin: 1rem 0 0.25rem;
+}
+
+.review-subtitle {
+  color: var(--color-text-secondary);
+  font-size: 0.9rem;
+}
+
+.review-controls {
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+  margin-bottom: 1rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.review-controls-row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: flex-end;
+}
+
+.review-control-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+  min-width: 160px;
+}
+
+.review-control-group label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-text-secondary);
+  font-weight: 600;
+}
+
+.review-select {
+  padding: 0.5rem 0.75rem;
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius);
+  font-size: 0.875rem;
+  background: white;
+  color: var(--color-text);
+  cursor: pointer;
+  transition: border-color 0.2s;
+}
+
+.review-select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.review-selection-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background: var(--color-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 0.75rem 1.25rem;
+  margin-bottom: 1rem;
+  box-shadow: var(--shadow-sm);
+  flex-wrap: wrap;
+}
+
+.review-selection-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.review-selection-count {
+  font-size: 0.875rem;
+  color: var(--color-text-secondary);
+}
+
+.review-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.review-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: var(--color-card);
+  border: 2px solid var(--color-border);
+  border-radius: var(--radius);
+  padding: 0.875rem 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.review-item:hover {
+  border-color: var(--color-primary-light);
+  background: var(--color-hover);
+}
+
+.review-item.selected {
+  border-color: var(--color-primary);
+  background: #e3f2fd;
+}
+
+.review-item-checkbox {
+  flex-shrink: 0;
+}
+
+.review-item-checkbox input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: var(--color-primary);
+}
+
+.review-item-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.review-item-meta {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  margin-bottom: 0.25rem;
+  flex-wrap: wrap;
+}
+
+.review-item-group {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  background: #e3f2fd;
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+}
+
+.review-item-topic {
+  font-size: 0.75rem;
+  color: var(--color-text-secondary);
+  font-style: italic;
+}
+
+.review-item-question {
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.review-item-stat {
+  flex-shrink: 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.25rem 0.625rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.review-item-stat.stat-good {
+  background: var(--color-success-bg);
+  color: var(--color-success);
+}
+
+.review-item-stat.stat-medium {
+  background: #fff3e0;
+  color: #e65100;
+}
+
+.review-item-stat.stat-bad {
+  background: var(--color-error-bg);
+  color: var(--color-error);
+}
+
+.review-item-stat.stat-not-attempted {
+  background: var(--color-hover);
+  color: var(--color-text-secondary);
+}
+
+.review-empty {
+  text-align: center;
+  padding: 3rem 1rem;
+  color: var(--color-text-secondary);
+  font-size: 1rem;
+}
+
+/* Custom test banner */
+.custom-test-banner {
+  background: #fff3e0;
+  border: 2px solid #f57c00;
+  border-radius: var(--radius);
+  padding: 0.75rem 1.25rem;
+  margin-bottom: 1rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #e65100;
+  font-weight: 600;
+}
+
 /* Footer */
 .app-footer {
   text-align: center;
@@ -853,5 +1068,39 @@
   .history-table td {
     padding: 0.5rem 0.625rem;
     font-size: 0.8rem;
+  }
+
+  .review-controls-row {
+    flex-direction: column;
+  }
+
+  .review-selection-bar {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .review-selection-info {
+    flex-direction: column;
+  }
+
+  .review-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .review-item-stat {
+    align-self: flex-end;
+  }
+
+  .review-item-checkbox {
+    position: absolute;
+    right: 1rem;
+    top: 0.875rem;
+  }
+
+  .review-item {
+    position: relative;
+    padding-right: 2.5rem;
   }
 }

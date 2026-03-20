@@ -1,12 +1,12 @@
 /**
  * Utilities for persisting test history in localStorage.
  *
- * Stores up to 10 most recent test results. Each entry contains the full test
+ * Stores up to 100 most recent test results. Each entry contains the full test
  * data (questions, user answers, results) so a past test can be reviewed later.
  */
 
 const STORAGE_KEY = 'cz-realie-test-history'
-const MAX_ENTRIES = 10
+const MAX_ENTRIES = 100
 
 /**
  * Returns the saved test history array (newest first), or an empty array.

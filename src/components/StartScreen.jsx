@@ -8,8 +8,9 @@
  * @param {Array}    props.history       – Array of past test entries (newest first).
  * @param {Function} props.onReviewEntry – Callback to load a past test for review.
  * @param {Function} props.onDeleteEntry – Callback to delete a past test entry by id.
+ * @param {Function} props.onGoToQuestionReview – Callback to navigate to question review screen.
  */
-function StartScreen({ onStart, history, onReviewEntry, onDeleteEntry }) {
+function StartScreen({ onStart, history, onReviewEntry, onDeleteEntry, onGoToQuestionReview }) {
   /** Format ISO date string to a human-readable Czech locale format. */
   const formatDate = (isoString) => {
     const d = new Date(isoString)
@@ -84,9 +85,14 @@ function StartScreen({ onStart, history, onReviewEntry, onDeleteEntry }) {
         </div>
       </div>
 
-      <button className="btn btn-primary btn-lg" onClick={onStart}>
-        Zahájit test
-      </button>
+      <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+        <button className="btn btn-primary btn-lg" onClick={onStart}>
+          Zahájit test
+        </button>
+        <button className="btn btn-outline btn-lg" onClick={onGoToQuestionReview}>
+          Přehled otázek
+        </button>
+      </div>
 
       {history.length > 0 && (
         <div className="history-section">

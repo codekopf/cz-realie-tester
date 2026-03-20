@@ -1,16 +1,20 @@
 /**
  * Main application component.
  *
- * Manages navigation between screens (start, exam progress, results), generates random tests and evaluates results.
- * Persists the last 10 test results in localStorage so users can review past attempts.
+ * Manages navigation between screens (start, exam progress, results, question review),
+ * generates random tests and evaluates results.
+ * Persists the last 100 test results in localStorage so users can review past attempts.
+ * Supports custom tests built from manually selected questions (results not stored).
  */
-import { useState, useCallback, useRef } from 'react'
+import { useState, useCallback, useRef, useMemo } from 'react'
 import './App.css'
 import questionsData from './data/questions.json'
 import StartScreen from './components/StartScreen'
 import ExamScreen from './components/ExamScreen'
 import ResultsScreen from './components/ResultsScreen'
+import QuestionReviewScreen from './components/QuestionReviewScreen'
 import { getTestHistory, saveTestResult, removeTestEntry } from './testHistory'
+import { getQuestionStatsArray } from './questionStats'
 
 const QUESTIONS_PER_TEST = 30
 const PASS_THRESHOLD = 18
@@ -29,13 +33,17 @@ function generateTest() {
 }
 
 function App() {
-  const [screen, setScreen] = useState('start') // 'start' | 'exam' | 'results'
+  const [screen, setScreen] = useState('start') // 'start' | 'exam' | 'results' | 'question-review'
   const [testQuestions, setTestQuestions] = useState([])
   const [userAnswers, setUserAnswers] = useState({})
   const [isEvaluated, setIsEvaluated] = useState(false)
   const [currentResults, setCurrentResults] = useState(null)
   const [history, setHistory] = useState(() => getTestHistory())
+  const [isCustomTest, setIsCustomTest] = useState(false)
   const testStartTimeRef = useRef(null)
+
+  // Compute question stats from history (memoized, recalculated when history changes)
+  const questionStats = useMemo(() => getQuestionStatsArray(history), [history])
 
   const startNewTest = useCallback(() => {
     const test = generateTest()
@@ -43,6 +51,19 @@ function App() {
     setUserAnswers({})
     setIsEvaluated(false)
     setCurrentResults(null)
+    setIsCustomTest(false)
+    testStartTimeRef.current = Date.now()
+    setScreen('exam')
+    window.scrollTo(0, 0)
+  }, [])
+
+  /** Start a custom test from manually selected questions. No time limit, results not stored. */
+  const startCustomTest = useCallback((selectedQuestions) => {
+    setTestQuestions(selectedQuestions)
+    setUserAnswers({})
+    setIsEvaluated(false)
+    setCurrentResults(null)
+    setIsCustomTest(true)
     testStartTimeRef.current = Date.now()
     setScreen('exam')
     window.scrollTo(0, 0)
@@ -58,16 +79,18 @@ function App() {
 
   const computeResults = useCallback((questions, answers) => {
     let correct = 0
+    const total = questions.length
     questions.forEach((q, index) => {
       if (answers[index] === q.correctAnswer) {
         correct++
       }
     })
+    const passThreshold = total === QUESTIONS_PER_TEST ? PASS_THRESHOLD : Math.ceil(total * 0.6)
     return {
       correct,
-      total: QUESTIONS_PER_TEST,
-      passed: correct >= PASS_THRESHOLD,
-      percentage: Math.round((correct / QUESTIONS_PER_TEST) * 100),
+      total,
+      passed: correct >= passThreshold,
+      percentage: Math.round((correct / total) * 100),
     }
   }, [])
 
@@ -82,13 +105,16 @@ function App() {
     setScreen('results')
     window.scrollTo(0, 0)
 
-    // Save to history
     const results = computeResults(testQuestions, userAnswers)
     results.elapsedSeconds = elapsedSeconds
     setCurrentResults(results)
-    saveTestResult({ questions: testQuestions, userAnswers, results })
-    setHistory(getTestHistory())
-  }, [testQuestions, userAnswers, computeResults, getElapsedSeconds])
+
+    // Only save to history for standard tests, not custom tests
+    if (!isCustomTest) {
+      saveTestResult({ questions: testQuestions, userAnswers, results })
+      setHistory(getTestHistory())
+    }
+  }, [testQuestions, userAnswers, computeResults, getElapsedSeconds, isCustomTest])
 
   const handleReviewQuestions = useCallback(() => {
     setScreen('exam')
@@ -101,12 +127,19 @@ function App() {
     setUserAnswers(entry.userAnswers)
     setIsEvaluated(true)
     setCurrentResults(entry.results)
+    setIsCustomTest(false)
     setScreen('results')
     window.scrollTo(0, 0)
   }, [])
 
   const handleBackToStart = useCallback(() => {
+    setIsCustomTest(false)
     setScreen('start')
+    window.scrollTo(0, 0)
+  }, [])
+
+  const handleGoToQuestionReview = useCallback(() => {
+    setScreen('question-review')
     window.scrollTo(0, 0)
   }, [])
 
@@ -129,6 +162,7 @@ function App() {
             history={history}
             onReviewEntry={handleReviewHistoryEntry}
             onDeleteEntry={handleDeleteEntry}
+            onGoToQuestionReview={handleGoToQuestionReview}
           />
         )}
 
@@ -139,8 +173,9 @@ function App() {
             onAnswer={handleAnswer}
             onEvaluate={handleEvaluate}
             isEvaluated={isEvaluated}
-            timeLimitMs={TIME_LIMIT_MS}
+            timeLimitMs={isCustomTest ? null : TIME_LIMIT_MS}
             testStartTime={testStartTimeRef.current}
+            isCustomTest={isCustomTest}
           />
         )}
 
@@ -152,6 +187,15 @@ function App() {
             onNewTest={startNewTest}
             onReview={handleReviewQuestions}
             onBackToStart={handleBackToStart}
+            isCustomTest={isCustomTest}
+          />
+        )}
+
+        {screen === 'question-review' && (
+          <QuestionReviewScreen
+            questionStats={questionStats}
+            onStartCustomTest={startCustomTest}
+            onBack={handleBackToStart}
           />
         )}
       </main>

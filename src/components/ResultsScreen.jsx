@@ -20,11 +20,17 @@ function formatElapsedTime(totalSeconds) {
   return `${mins}m ${String(secs).padStart(2, '0')}s`
 }
 
-function ResultsScreen({ questions, userAnswers, results, onNewTest, onReview, onBackToStart }) {
+function ResultsScreen({ questions, userAnswers, results, onNewTest, onReview, onBackToStart, isCustomTest }) {
   const { correct, total, passed, percentage } = results
 
   return (
     <div className="results-screen">
+      {isCustomTest && (
+        <div className="custom-test-banner" style={{ marginBottom: '1.5rem' }}>
+          Vlastní test &mdash; výsledky nebyly uloženy do historie
+        </div>
+      )}
+
       <div className={`result-badge ${passed ? 'passed' : 'failed'}`}>
         <div>
           <span className="score">{correct}</span>
@@ -39,12 +45,12 @@ function ResultsScreen({ questions, userAnswers, results, onNewTest, onReview, o
       <p className="result-detail">
         Správně jste odpověděli na {correct} z {total} otázek ({percentage}%).
         {' '}
-        {passed
+        {!isCustomTest && (passed
           ? `K úspěchu stačilo 18 správných odpovědí (60%).`
-          : `Pro úspěch je potřeba minimálně 18 správných odpovědí (60%).`}
+          : `Pro úspěch je potřeba minimálně 18 správných odpovědí (60%).`)}
       </p>
 
-      {results.elapsedSeconds != null && (
+      {results.elapsedSeconds != null && !isCustomTest && (
         <p className="result-time">
           &#9200; Cas: {formatElapsedTime(results.elapsedSeconds)} z 30m 00s
         </p>

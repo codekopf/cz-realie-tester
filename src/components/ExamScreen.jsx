@@ -19,17 +19,18 @@ function formatTime(totalSeconds) {
   return `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`
 }
 
-function ExamScreen({ questions, userAnswers, onAnswer, onEvaluate, isEvaluated, timeLimitMs, testStartTime }) {
+function ExamScreen({ questions, userAnswers, onAnswer, onEvaluate, isEvaluated, timeLimitMs, testStartTime, isCustomTest }) {
   const [currentIndex, setCurrentIndex] = useState(0)
-  const [remainingSeconds, setRemainingSeconds] = useState(() => Math.floor(timeLimitMs / 1000))
+  const [remainingSeconds, setRemainingSeconds] = useState(() => timeLimitMs ? Math.floor(timeLimitMs / 1000) : 0)
   const [showTimeUpModal, setShowTimeUpModal] = useState(false)
   const timeUpTriggeredRef = useRef(false)
   const totalQuestions = questions.length
   const answeredCount = Object.keys(userAnswers).length
+  const hasTimer = timeLimitMs != null && !isCustomTest
 
-  // Countdown timer
+  // Countdown timer (only for standard tests)
   useEffect(() => {
-    if (isEvaluated || !testStartTime) return
+    if (isEvaluated || !testStartTime || !hasTimer) return
 
     const tick = () => {
       const elapsed = Date.now() - testStartTime
@@ -45,7 +46,7 @@ function ExamScreen({ questions, userAnswers, onAnswer, onEvaluate, isEvaluated,
     tick() // run immediately
     const intervalId = setInterval(tick, 1000)
     return () => clearInterval(intervalId)
-  }, [isEvaluated, testStartTime, timeLimitMs])
+  }, [isEvaluated, testStartTime, timeLimitMs, hasTimer])
 
   const handleTimeUpAccept = useCallback(() => {
     setShowTimeUpModal(false)
@@ -106,8 +107,15 @@ function ExamScreen({ questions, userAnswers, onAnswer, onEvaluate, isEvaluated,
         </div>
       )}
 
-      {/* Timer */}
-      {!isEvaluated && (
+      {/* Custom test banner */}
+      {isCustomTest && !isEvaluated && (
+        <div className="custom-test-banner">
+          Vlastní test &mdash; {totalQuestions} otázek &middot; bez časového limitu &middot; výsledky nebudou uloženy
+        </div>
+      )}
+
+      {/* Timer (only for standard tests) */}
+      {!isEvaluated && hasTimer && (
         <div className={`exam-timer ${isWarning ? 'warning' : ''} ${isCritical ? 'critical' : ''}`}>
           <span className="timer-icon">&#9200;</span>
           <span className="timer-value">{formatTime(remainingSeconds)}</span>
